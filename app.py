@@ -11,7 +11,7 @@ import plotly.express as px
 st.title("แอปทำนายการดรอปเรียน")
 
 # โหลดข้อมูล
-data = pd.read_csv("data.csv")  # เปลี่ยนชื่อไฟล์ถ้าชื่อต่าง
+data = pd.read_csv("Deploy File - ชีต1 (2).csv")  # เปลี่ยนชื่อไฟล์ถ้าชื่อต่าง
 
 # เลือกตัวแปร
 features = ['Monthly education expenses', 'Absences per month', 'Engagement Score',
