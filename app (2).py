@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, roc_curve, auc
 import plotly.express as px
 
-df = pd.read_csv('/content/Full data set 515 - ชีต1.csv')  # เปลี่ยนชื่อไฟล์ให้ตรงกับที่คุณอัปโหลด
+df = pd.read_csv('Full data set 515 - ชีต1.csv')  # เปลี่ยนชื่อไฟล์ให้ตรงกับที่คุณอัปโหลด
 df.duplicated().sum()
 # ลบข้อมูลที่ซ้ำ
 df_cleaned = df.drop_duplicates()
@@ -107,7 +107,7 @@ print("\nข้อมูลหลังแก้ไข:")
 print(df['Satisfied with the curriculum'].head(10))
 
 # บันทึกกลับไปที่ไฟล์ Excel (ถ้าต้องการ)
-df.to_csv('/content/Full data set 515 - ชีต1.csv', index=False)
+df.to_csv('Full data set 515 - ชีต1.csv', index=False)
 # ดูข้อมูลเริ่มต้น
 print("ข้อมูลก่อนแก้ไข:")
 df['Course content matching interests'].head(10)
@@ -140,7 +140,7 @@ print("\nข้อมูลหลังแก้ไข:")
 print(df['Course content matching interests'].head(10))
 
 # บันทึกกลับไปที่ไฟล์ Excel (ถ้าต้องการ)
-df.to_csv('/content/Full data set 515 - ชีต1.csv', index=False)
+df.to_csv('Full data set 515 - ชีต1.csv', index=False)
 # ดูข้อมูลเริ่มต้น
 print("ข้อมูลก่อนแก้ไข:")
 df['Course content difficulty'].head(10)
@@ -173,7 +173,7 @@ print("\nข้อมูลหลังแก้ไข:")
 print(df['Course content difficulty'].head(10))
 
 # บันทึกกลับไปที่ไฟล์ Excel (ถ้าต้องการ)
-df.to_csv('/content/Full data set 515 - ชีต1.csv', index=False)
+df.to_csv('Full data set 515 - ชีต1.csv', index=False)
 from sklearn.preprocessing import LabelEncoder
 
 le = LabelEncoder()
