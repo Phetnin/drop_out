@@ -324,9 +324,3 @@ fig_fi = px.bar(x=feature_importance[sorted_idx], y=[features[i] for i in sorted
                 orientation='h', title='Feature Importance',
                 labels={'x': 'Importance', 'y': 'Feature'})
 st.plotly_chart(fig_fi)
-%%writefile requirements.txt
-streamlit
-pandas
-numpy
-scikit-learn
-plotly
