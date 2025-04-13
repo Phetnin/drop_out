@@ -35,16 +35,16 @@ model.fit(X_train, y_train)
 
 # อินพุตจากผู้ใช้
 st.subheader("กรอกข้อมูลนักเรียน")
-monthly_expenses = st.slider("ค่าใช้จ่ายในการศึกษา (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
+monthly_expenses = st.slider("ค่าใช้จ่ายในการศึกษา (0-4)", 0, 4, 2)  # คงช่วง 0-4 ตามที่ระบุก่อนหน้า
 absences = st.number_input("จำนวนวันที่ขาดเรียนต่อเดือน", min_value=0, value=2, step=1)
-engagement_score = st.slider("คะแนนความสนใจในการเรียน (-2 ถึง 3)", -2, 3, 0)  # ปรับช่วงเป็น -2 ถึง 3
-economie_factor = st.slider("ปัจจัยด้านเศรษฐกิจ (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
-motivational_factors = st.slider("ปัจจัยด้านแรงจูงใจ (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
-family_factors = st.slider("ปัจจัยด้านครอบครัว (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
-social_factors = st.slider("ปัจจัยด้านสังคม (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
-distance_factor = st.slider("ปัจจัยด้านระยะทาง (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
-health_factor = st.slider("ปัจจัยด้านสุขภาพ (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
-school_environment_factor = st.slider("ปัจจัยด้านสภาพแวดล้อมโรงเรียน (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
+engagement_score = st.slider("คะแนนความสนใจในการเรียน (-4 ถึง 8)", -4, 8, 0)  # ปรับช่วงเป็น -4 ถึง 8
+economie_factor = st.slider("ปัจจัยด้านเศรษฐกิจ (1-5)", 1, 5, 3)  # ปรับช่วงเป็น 1-5
+motivational_factors = st.slider("ปัจจัยด้านแรงจูงใจ (1-5)", 1, 5, 3)  # ปรับช่วงเป็น 1-5
+family_factors = st.slider("ปัจจัยด้านครอบครัว (1-5)", 1, 5, 3)  # ปรับช่วงเป็น 1-5
+social_factors = st.slider("ปัจจัยด้านสังคม (1-5)", 1, 5, 3)  # ปรับช่วงเป็น 1-5
+distance_factor = st.slider("ปัจจัยด้านระยะทาง (1-5)", 1, 5, 3)  # ปรับช่วงเป็น 1-5
+health_factor = st.slider("ปัจจัยด้านสุขภาพ (1-5)", 1, 5, 3)  # ปรับช่วงเป็น 1-5
+school_environment_factor = st.slider("ปัจจัยด้านสภาพแวดล้อมโรงเรียน (1-5)", 1, 5, 3)
 
 # รวมข้อมูลที่ผู้ใช้กรอก
 user_input = np.array([[monthly_expenses, absences, engagement_score, 
