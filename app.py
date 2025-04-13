@@ -4,14 +4,15 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, roc_curve, auc
-import plotly.express as px
 
 # หัวข้อแอป
-st.title("แอปทำนายการดรอปเรียน")
+st.title("แอปทำนายโอกาสดรอปเรียนสำหรับนักเรียน")
+
+# คำอธิบาย
+st.write("กรอกข้อมูลด้านล่างเพื่อทำนายโอกาสที่นักเรียนจะดรอปเรียน")
 
 # โหลดข้อมูล
-data = pd.read_csv("Deploy File - ชีต1 (2).csv")  # เปลี่ยนชื่อไฟล์ถ้าชื่อต่าง
+data = pd.read_csv("Full data set 515 - หลัก1.csv")
 
 # เลือกตัวแปร
 features = ['Monthly education expenses', 'Absences per month', 'Engagement Score',
@@ -32,31 +33,43 @@ X_test = scaler.transform(X_test)
 model = RandomForestClassifier(random_state=42)
 model.fit(X_train, y_train)
 
+# อินพุตจากผู้ใช้
+st.subheader("กรอกข้อมูลนักเรียน")
+monthly_expenses = st.slider("ค่าใช้จ่ายในการศึกษา (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
+absences = st.number_input("จำนวนวันที่ขาดเรียนต่อเดือน", min_value=0, value=2, step=1)
+engagement_score = st.slider("คะแนนความสนใจในการเรียน (-2 ถึง 3)", -2, 3, 0)  # ปรับช่วงเป็น -2 ถึง 3
+economie_factor = st.slider("ปัจจัยด้านเศรษฐกิจ (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
+motivational_factors = st.slider("ปัจจัยด้านแรงจูงใจ (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
+family_factors = st.slider("ปัจจัยด้านครอบครัว (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
+social_factors = st.slider("ปัจจัยด้านสังคม (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
+distance_factor = st.slider("ปัจจัยด้านระยะทาง (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
+health_factor = st.slider("ปัจจัยด้านสุขภาพ (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
+school_environment_factor = st.slider("ปัจจัยด้านสภาพแวดล้อมโรงเรียน (0-4)", 0, 4, 2)  # ปรับช่วงเป็น 0-4
+
+# รวมข้อมูลที่ผู้ใช้กรอก
+user_input = np.array([[monthly_expenses, absences, engagement_score, 
+                        economie_factor, motivational_factors, family_factors,
+                        social_factors, distance_factor, health_factor, school_environment_factor]])
+
+# Scale ข้อมูลผู้ใช้
+user_input_scaled = scaler.transform(user_input)
+
 # ทำนาย
-y_pred = model.predict(X_test)
-y_pred_prob = model.predict_proba(X_test)[:, 1]
+prediction = model.predict(user_input_scaled)
+prediction_prob = model.predict_proba(user_input_scaled)[0][1] * 100  # ความน่าจะเป็นของการดรอป (class 1)
 
 # แสดงผลลัพธ์
-st.subheader("ผลลัพธ์โมเดล")
-st.write("รายงานผล Random Forest:")
-st.text(classification_report(y_test, y_pred))
+st.subheader("ผลการทำนาย")
+if prediction[0] == 1:
+    st.error(f"⚠️ นักเรียนมีโอกาสดรอปเรียนสูง ({prediction_prob:.1f}% โอกาสดรอปเรียน)")
+else:
+    st.success(f"✅ นักเรียนมีโอกาสดรอปเรียนต่ำ ({prediction_prob:.1f}% โอกาสดรอปเรียน)")
 
-# ROC Curve
-fpr, tpr, _ = roc_curve(y_test, y_pred_prob)
-roc_auc = auc(fpr, tpr)
-st.write(f"ROC-AUC Score: {roc_auc:.2f}")
-
-# วาด ROC Curve ด้วย Plotly
-fig_roc = px.line(x=fpr, y=tpr, title=f'ROC Curve (AUC = {roc_auc:.2f})',
-                  labels={'x': 'False Positive Rate', 'y': 'True Positive Rate'})
-fig_roc.add_scatter(x=[0, 1], y=[0, 1], mode='lines', line=dict(dash='dash'), name='Random Guess')
-st.plotly_chart(fig_roc)
-
-# Feature Importance
-st.subheader("ความสำคัญของตัวแปร")
-feature_importance = model.feature_importances_
-sorted_idx = np.argsort(feature_importance)
-fig_fi = px.bar(x=feature_importance[sorted_idx], y=[features[i] for i in sorted_idx],
-                orientation='h', title='Feature Importance',
-                labels={'x': 'Importance', 'y': 'Feature'})
-st.plotly_chart(fig_fi)
+# คำแนะนำ
+st.subheader("คำแนะนำ")
+if prediction_prob > 70:
+    st.write("ควรติดตามนักเรียนอย่างใกล้ชิด และให้คำปรึกษาด้านการเรียนหรือครอบครัว")
+elif prediction_prob > 50:
+    st.write("ควรให้คำแนะนำเพิ่มเติม และตรวจสอบปัจจัยที่อาจส่งผลต่อการเรียน")
+else:
+    st.write("นักเรียนมีแนวโน้มที่ดีในการเรียนต่อ ควรสนับสนุนให้รักษาความตั้งใจ")
