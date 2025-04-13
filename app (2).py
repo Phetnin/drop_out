@@ -211,65 +211,6 @@ df['distance_factor'] = df[['Q16', 'Q17', 'Q18', 'Q19', 'Q20']].mean(axis=1)
 df['health_factor'] = df[['Q21', 'Q22', 'Q23', 'Q24', 'Q25']].mean(axis=1)
 df['social_factors'] = df[['Q26', 'Q27', 'Q28', 'Q29', 'Q30']].mean(axis=1)
 df['family_factors'] = df[['Q31', 'Q32', 'Q33', 'Q34', 'Q35']].mean(axis=1)
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, roc_curve, auc
-import matplotlib.pyplot as plt
-
-# เลือกตัวแปร
-selected_features = ['Monthly education expenses','Absences per month','Engagement Score','economie_factor', 'motivational_factors', 'family_factors', 'social_factors', 'distance_factor','health_factor','school_environment_factor']
-X = df[selected_features]
-y = df['Final decision to drop out']
-# แบ่งข้อมูล
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-# Scale ข้อมูล
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-
-# สร้างและฝึกโมเดล
-model = RandomForestClassifier(random_state=42)
-model.fit(X_train, y_train)
-
-# ทำนายและประเมิน
-y_pred = model.predict(X_test)
-print("Random Forest:")
-
-# คำนวณ ROC Curve ก่อนที่จะแสดงค่า ROC-AUC
-y_pred_prob = model.predict_proba(X_test)[:, 1]
-fpr, tpr, thresholds = roc_curve(y_test, y_pred_prob)
-roc_auc = auc(fpr, tpr)
-
-# แสดงค่า ROC-AUC
-print(f"ROC-AUC Score: {roc_auc: }")
-print(classification_report(y_test, y_pred))
-
-# วาด ROC Curve
-plt.figure(figsize=(8, 6))
-plt.plot(fpr, tpr, color='blue', label=f'ROC curve (AUC = {roc_auc:.2f})')
-plt.plot([0, 1], [0, 1], color='gray', linestyle='--')
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.title('ROC Curve')
-plt.legend(loc='lower right')
-plt.show()
-
-# คำนวณ Feature Importance (ความสำคัญของตัวแปร)
-feature_importance = model.feature_importances_
-feature_names = selected_features
-
-# สร้างกราฟ Feature Importance
-plt.figure(figsize=(10, 6))
-sorted_idx = np.argsort(feature_importance)  # เรียงจากน้อยไปมาก
-plt.barh(range(len(sorted_idx)), feature_importance[sorted_idx], align='center', color='skyblue')
-plt.yticks(range(len(sorted_idx)), [feature_names[i] for i in sorted_idx])
-plt.xlabel('Feature Importance')
-plt.title('Feature Importance for Dropout Prediction')
-plt.show()
 
 # หัวข้อแอป
 st.title("แอปทำนายการดรอปเรียน")
