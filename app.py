@@ -80,8 +80,15 @@ monthly_expenses = expense_options[monthly_expenses_text]
 # Number of school absence days
 absences = st.number_input("Number of school absence days per month", min_value=0, value=2, step=1)
 
-# Learning engagement score
-engagement_score = st.slider("Learning Engagement Score (-4 to 8)", -4, 8, 0)
+engagement_levels = {
+    "Very Low": -3,
+    "Low": 0,
+    "Moderate": 3,
+    "High": 5,
+    "Very High": 8
+}
+engagement_text = st.selectbox("Level of Learning Engagement", list(engagement_levels.keys()))
+engagement_score = engagement_levels[engagement_text]
 
 # Contributing factors
 factor_options = ["Not much", "Rarely", "Moderate", "Much", "Very much"]
