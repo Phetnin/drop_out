@@ -6,10 +6,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 
 # หัวข้อแอป
-st.title("แอปทำนายโอกาสดรอปเรียนสำหรับนักเรียน")
+st.title("App predict the likelihoof that a student will drop out")
 
 # คำอธิบาย
-st.write("กรอกข้อมูลด้านล่างเพื่อทำนายโอกาสที่นักเรียนจะดรอปเรียน")
+st.write("input data below")
 
 # โหลดข้อมูล
 data = pd.read_csv("Deploy File - ชีต1 (2).csv")
@@ -37,114 +37,114 @@ model.fit(X_train, y_train)
 def convert_to_text(value, factor_type):
     if factor_type == 'expense':
         if value == 0:
-            return "1 ล้านถึง 2 ล้านบาท"
+            return "1 million to 2 million kip"
         elif value == 1:
-            return "100,000 ถึง 500,000 บาท"
+            return "100,000 to 500,000 kip"
         elif value == 2:
-            return "500,000 ถึง 1 ล้านบาท"
+            return "500,000 - 1 million kip"
         elif value == 3:
-            return "มากกว่า 2 ล้านบาท"
+            return "More than 2 million kip"
         elif value == 4:
-            return "น้อยกว่า 100,000 บาท"
+            return "less than 100,000 kip"
     elif factor_type in ['factor', 'absence']:
         if factor_type == 'absence':
-            return f"{value} วัน"
+            return f"{value} day"
         elif value == 1:
-            return "ไม่มาก"
+            return "Not much"
         elif value == 2:
-            return "ไม่ค่อย"
+            return "Rarely"
         elif value == 3:
-            return "ปานกลาง"
+            return "Moderate"
         elif value == 4:
-            return "มาก"
+            return "Much"
         elif value == 5:
-            return "เยอะมาก"
+            return "Very much"
     elif factor_type == 'engagement':
         return str(value)
     return str(value)
 
 # อินพุตจากผู้ใช้
-st.subheader("กรอกข้อมูลนักเรียน")
+st.subheader("input data student")
 
-# ค่าใช้จ่ายในการศึกษา
+# Education Expenses
 expense_options = {
-    "1 ล้านถึง 2 ล้านบาท": 0,
-    "100,000 ถึง 500,000 บาท": 1,
-    "500,000 ถึง 1 ล้านบาท": 2,
-    "มากกว่า 2 ล้านบาท": 3,
-    "น้อยกว่า 100,000 บาท": 4
+    "1 to 2 million kip": 0,
+    "100,000 to 500,000 kip": 1,
+    "500,000 to 1 million kip": 2,
+    "More than 2 million kip": 3,
+    "Less than 100,000 kip": 4
 }
-monthly_expenses_text = st.selectbox("ค่าใช้จ่ายในการศึกษา", list(expense_options.keys()))
+monthly_expenses_text = st.selectbox("Education Expenses", list(expense_options.keys()))
 monthly_expenses = expense_options[monthly_expenses_text]
 
-# จำนวนวันที่ขาดเรียน
-absences = st.number_input("จำนวนวันที่ขาดเรียนต่อเดือน", min_value=0, value=2, step=1)
+# Number of school absence days
+absences = st.number_input("Number of school absence days per month", min_value=0, value=2, step=1)
 
-# คะแนนความสนใจในการเรียน
-engagement_score = st.slider("คะแนนความสนใจในการเรียน (-4 ถึง 8)", -4, 8, 0)
+# Learning engagement score
+engagement_score = st.slider("Learning Engagement Score (-4 to 8)", -4, 8, 0)
 
-# ปัจจัยต่าง ๆ
-factor_options = ["ไม่มาก", "ไม่ค่อย", "ปานกลาง", "มาก", "เยอะมาก"]
+# Contributing factors
+factor_options = ["Not much", "Rarely", "Moderate", "Much", "Very much"]
 factor_values = {text: i+1 for i, text in enumerate(factor_options)}
 
-economie_factor_text = st.selectbox("ปัจจัยด้านเศรษฐกิจ", factor_options)
+economie_factor_text = st.selectbox("Economic Factors", factor_options)
 economie_factor = factor_values[economie_factor_text]
 
-motivational_factors_text = st.selectbox("ปัจจัยด้านแรงจูงใจ", factor_options)
+motivational_factors_text = st.selectbox("Motivational Factors", factor_options)
 motivational_factors = factor_values[motivational_factors_text]
 
-family_factors_text = st.selectbox("ปัจจัยด้านครอบครัว", factor_options)
+family_factors_text = st.selectbox("Family Factors", factor_options)
 family_factors = factor_values[family_factors_text]
 
-social_factors_text = st.selectbox("ปัจจัยด้านสังคม", factor_options)
+social_factors_text = st.selectbox("Social Factors", factor_options)
 social_factors = factor_values[social_factors_text]
 
-distance_factor_text = st.selectbox("ปัจจัยด้านระยะทาง", factor_options)
+distance_factor_text = st.selectbox("Distance Factors", factor_options)
 distance_factor = factor_values[distance_factor_text]
 
-health_factor_text = st.selectbox("ปัจจัยด้านสุขภาพ", factor_options)
+health_factor_text = st.selectbox("Health Factors", factor_options)
 health_factor = factor_values[health_factor_text]
 
-school_environment_factor_text = st.selectbox("ปัจจัยด้านสภาพแวดล้อมโรงเรียน", factor_options)
+school_environment_factor_text = st.selectbox("School Environment Factors", factor_options)
 school_environment_factor = factor_values[school_environment_factor_text]
 
-# รวมข้อมูลที่ผู้ใช้กรอก
+# Combine user input
 user_input = np.array([[monthly_expenses, absences, engagement_score, 
                         economie_factor, motivational_factors, family_factors,
                         social_factors, distance_factor, health_factor, school_environment_factor]])
 
-# Scale ข้อมูลผู้ใช้
+# Scale input
 user_input_scaled = scaler.transform(user_input)
 
-# ทำนาย
+# Predict
 prediction = model.predict(user_input_scaled)
-prediction_prob = model.predict_proba(user_input_scaled)[0][1] * 100  # ความน่าจะเป็นของการดรอป (class 1)
+prediction_prob = model.predict_proba(user_input_scaled)[0][1] * 100  # Dropout probability (class 1)
 
-# แสดงผลลัพธ์
-st.subheader("ผลการทำนาย")
+# Prediction result
+st.subheader("Prediction Result")
 if prediction[0] == 1:
-    st.error(f"⚠️ นักเรียนมีโอกาสดรอปเรียนสูง ({prediction_prob:.1f}% โอกาสดรอปเรียน)")
+    st.error(f"⚠️ High risk of dropping out ({prediction_prob:.1f}% chance of dropout)")
 else:
-    st.success(f"✅ นักเรียนมีโอกาสดรอปเรียนต่ำ ({prediction_prob:.1f}% โอกาสดรอปเรียน)")
+    st.success(f"✅ Low risk of dropping out ({prediction_prob:.1f}% chance of dropout)")
 
-# แสดงข้อมูลที่ผู้ใช้กรอก
-st.subheader("ข้อมูลที่กรอก")
-st.write(f"- ค่าใช้จ่ายในการศึกษา: {monthly_expenses_text}")
-st.write(f"- จำนวนวันที่ขาดเรียนต่อเดือน: {convert_to_text(absences, 'absence')}")
-st.write(f"- คะแนนความสนใจในการเรียน: {convert_to_text(engagement_score, 'engagement')}")
-st.write(f"- ปัจจัยด้านเศรษฐกิจ: {economie_factor_text}")
-st.write(f"- ปัจจัยด้านแรงจูงใจ: {motivational_factors_text}")
-st.write(f"- ปัจจัยด้านครอบครัว: {family_factors_text}")
-st.write(f"- ปัจจัยด้านสังคม: {social_factors_text}")
-st.write(f"- ปัจจัยด้านระยะทาง: {distance_factor_text}")
-st.write(f"- ปัจจัยด้านสุขภาพ: {health_factor_text}")
-st.write(f"- ปัจจัยด้านสภาพแวดล้อมโรงเรียน: {school_environment_factor_text}")
+# Display user input
+st.subheader("Input Summary")
+st.write(f"- Education Expenses: {monthly_expenses_text}")
+st.write(f"- Absence Days per Month: {convert_to_text(absences, 'absence')}")
+st.write(f"- Engagement Score: {convert_to_text(engagement_score, 'engagement')}")
+st.write(f"- Economic Factors: {economie_factor_text}")
+st.write(f"- Motivational Factors: {motivational_factors_text}")
+st.write(f"- Family Factors: {family_factors_text}")
+st.write(f"- Social Factors: {social_factors_text}")
+st.write(f"- Distance Factors: {distance_factor_text}")
+st.write(f"- Health Factors: {health_factor_text}")
+st.write(f"- School Environment Factors: {school_environment_factor_text}")
 
-# คำแนะนำ
-st.subheader("คำแนะนำ")
+# Suggestions
+st.subheader("Recommendation")
 if prediction_prob > 70:
-    st.write("ควรติดตามนักเรียนอย่างใกล้ชิด และให้คำปรึกษาด้านการเรียนหรือครอบครัว")
+    st.write("The student should be closely monitored and provided with academic or family counseling.")
 elif prediction_prob > 50:
-    st.write("ควรให้คำแนะนำเพิ่มเติม และตรวจสอบปัจจัยที่อาจส่งผลต่อการเรียน")
+    st.write("The student should be given additional guidance and reviewed for possible risk factors.")
 else:
-    st.write("นักเรียนมีแนวโน้มที่ดีในการเรียนต่อ ควรสนับสนุนให้รักษาความตั้งใจ")
+    st.write("The student shows strong potential to continue their education. Support and encourage their motivation.")
